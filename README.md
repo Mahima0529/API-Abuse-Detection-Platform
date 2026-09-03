@@ -34,7 +34,7 @@ A real-time API security dashboard for monitoring API traffic and abuse detectio
 <!-- Add your dashboard screenshot here -->
 
 <p align="center">
-  <img src="YOUR_SCREENSHOT_URL" alt="API Abuse Detection Dashboard">
+  <img src="Screenshot 2026-09-03 120347.png" alt="API Abuse Detection Dashboard">
 </p>
 
 ---
