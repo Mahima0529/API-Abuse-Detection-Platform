@@ -1,0 +1,53 @@
+// Prisma Schema for Intelligent API Abuse & Bot Detection Platform
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  password    String
+  role        String       @default("user")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  requestLogs RequestLog[]
+
+  @@map("users")
+}
+
+model RequestLog {
+  id             String   @id @default(uuid())
+  ipAddress      String   @map("ip_address")
+  userId         String?  @map("user_id")
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  endpoint       String
+  method         String
+  statusCode     Int      @map("status_code")
+  responseTimeMs Float    @map("response_time_ms")
+  userAgent      String?  @map("user_agent")
+  timestamp      DateTime @default(now())
+
+  @@index([ipAddress, timestamp])
+  @@index([userId, timestamp])
+  @@map("request_logs")
+}
+
+model SecurityEvent {
+  id          String   @id @default(uuid())
+  eventType   String   @map("event_type") // ENTITY_BLOCKED, HIGH_RISK_DETECTED, FAILED_LOGIN_SPIKE
+  entityType  String   @map("entity_type") // IP or USER
+  entityValue String   @map("entity_value") // IP Address or User ID
+  riskScore   Int      @map("risk_score")
+  details     String   // JSON string of signals triggered
+  timestamp   DateTime @default(now())
+
+  @@index([entityValue, timestamp])
+  @@index([eventType, timestamp])
+  @@map("security_events")
+}
